@@ -6,6 +6,8 @@ A Claude Code plugin that plans a project by Q&A before any agent writes code, t
 
 Version 0.2.0. MIT. Author: Tushar Pingle. The method came from a real project run by a solo, part-time founder. Every part was tested before it went in.
 
+![How Agent Team Kit works: onboard by Q&A, then one PM runs a team of builders and reviewers under guard hooks, role tests, and a cost line per session](docs/overview.svg)
+
 ```text
 /agent-team-kit:onboard-project   ->   /agent-team-kit:setup-team   ->   claude --agent pm
    discover + plan by Q&A              scaffold + verify                  the team runs
