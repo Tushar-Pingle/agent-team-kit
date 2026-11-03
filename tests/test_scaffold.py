@@ -23,20 +23,24 @@ def frontmatter(text: str) -> dict:
     """Parse the simple YAML frontmatter that the scaffold writes."""
     assert text.startswith("---\n"), "no frontmatter"
     body = text.split("---\n", 2)[1]
-    try:
-        import yaml  # type: ignore
-
-        return yaml.safe_load(body)
-    except ImportError:
-        out, key = {}, None
-        for line in body.splitlines():
-            if line.startswith("  - ") and key:
-                out.setdefault(key, []).append(line[4:])
-            elif ":" in line:
-                key, _, value = line.partition(":")
-                value = value.strip()
-                out[key] = json.loads(value) if value.startswith('"') else value
-        return out
+    # No PyYAML on purpose: CI runners do not have it, and the scaffold writes a flat subset of YAML.
+    out: dict = {}
+    key = None
+    for line in body.splitlines():
+        if line.startswith("  - ") and key:
+            if not isinstance(out.get(key), list):
+                out[key] = []
+            out[key].append(line[4:].strip())
+        elif ":" in line and not line.startswith(" "):
+            key, _, value = line.partition(":")
+            value = value.strip()
+            if value == "":
+                out[key] = []  # a block list follows
+            elif value.startswith('"'):
+                out[key] = json.loads(value)
+            else:
+                out[key] = value
+    return out
 
 
 class ScaffoldTest(unittest.TestCase):
