@@ -5,10 +5,10 @@
   "description": "Run a project with one human decider and a team of AI agents that know your stack. Onboarding that plans the project by Q&A before any code, a PM as single point of contact, spec-driven builders, QA/UAT/Designer reviewers with verdict lines, guard hooks, role tests, and a cost line for each session.",
   "author": {
     "name": "Tushar Pingle",
-    "url": "https://github.com/<github-user>"
+    "url": "https://github.com/Tushar-Pingle"
   },
-  "homepage": "https://github.com/<github-user>/agent-team-kit",
-  "repository": "https://github.com/<github-user>/agent-team-kit",
+  "homepage": "https://github.com/Tushar-Pingle/agent-team-kit",
+  "repository": "https://github.com/Tushar-Pingle/agent-team-kit",
   "license": "MIT",
   "keywords": ["agents", "team", "orchestration", "onboarding", "planning", "pm", "qa", "hooks", "role-tests", "cost", "method"]
 }

@@ -81,7 +81,7 @@ Prices are yours to fill from your provider's price page. The kit ships none, so
 ### From GitHub (Claude Code)
 
 ```text
-/plugin marketplace add <github-user>/agent-team-kit
+/plugin marketplace add Tushar-Pingle/agent-team-kit
 /plugin install agent-team-kit@agent-team-kit
 ```
 
@@ -90,7 +90,7 @@ Start a new session in your project.
 ### From a folder
 
 ```bash
-git clone https://github.com/<github-user>/agent-team-kit.git
+git clone https://github.com/Tushar-Pingle/agent-team-kit.git
 claude --plugin-dir /path/to/agent-team-kit
 ```
 
