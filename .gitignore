@@ -1,0 +1,5 @@
+__pycache__/
+*.pyc
+.in_use/
+.DS_Store
+*.zip

@@ -1,0 +1,27 @@
+name: test
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python: ["3.10", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Validate JSON files
+        run: |
+          python3 -c "import json,glob; [json.load(open(p)) for p in glob.glob('**/*.json', recursive=True)]"
+      - name: Cost report hook tests
+        run: python3 templates/.claude/hooks/tests/test_cost_report.py -v
+      - name: Scaffold tests (every preset, end to end; runs the full hook suite in a scaffolded project)
+        run: python3 tests/test_scaffold.py -v
+      - name: Discovery smoke test
+        run: python3 scripts/discover.py --target . > /dev/null

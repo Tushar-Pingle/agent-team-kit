@@ -1,10 +1,14 @@
 {
   "name": "agent-team-kit",
   "displayName": "Agent Team Kit",
-  "version": "0.1.0",
-  "description": "Set up a project that one human decider runs with a team of AI agents: a PM as single point of contact, spec-driven builders, QA/UAT/Designer reviewers with verdict lines, guard hooks, role tests, and the planning and logging method behind it.",
+  "version": "0.2.0",
+  "description": "Run a project with one human decider and a team of AI agents that know your stack. Onboarding that plans the project by Q&A before any code, a PM as single point of contact, spec-driven builders, QA/UAT/Designer reviewers with verdict lines, guard hooks, role tests, and a cost line for each session.",
   "author": {
-    "name": "Tushar Pingle"
+    "name": "Tushar Pingle",
+    "url": "https://github.com/<github-user>"
   },
-  "keywords": ["agents", "team", "orchestration", "pm", "qa", "hooks", "role-tests", "method"]
+  "homepage": "https://github.com/<github-user>/agent-team-kit",
+  "repository": "https://github.com/<github-user>/agent-team-kit",
+  "license": "MIT",
+  "keywords": ["agents", "team", "orchestration", "onboarding", "planning", "pm", "qa", "hooks", "role-tests", "cost", "method"]
 }

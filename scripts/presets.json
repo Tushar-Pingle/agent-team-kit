@@ -1,0 +1,63 @@
+{
+  "_comment": "Team presets for init_team.py. Each preset lists the roles to keep from team.example.json, in order. 'overrides' changes fields of a kept role. The user can still rename, merge, or add roles in the setup Q&A.",
+  "presets": {
+    "solo": {
+      "summary": "4 roles. One builder, one reviewer. For a solo decider on a small codebase.",
+      "roles": ["pm", "backend", "qa", "researcher"],
+      "overrides": {
+        "backend": {
+          "name": "dev",
+          "title": "Developer",
+          "description": "Developer. Use to build any part of the codebase from a spec.",
+          "mission": "Build the product from the specs, one issue at a time.",
+          "write": ["src/**", "tests/**"],
+          "hands_off": "QA (through a PR)."
+        }
+      }
+    },
+    "small": {
+      "summary": "7 roles. A Scrum master, two builders, QA and UAT. For a web app with a frontend and a backend.",
+      "roles": ["pm", "scrum-master", "backend", "frontend", "qa", "uat", "researcher"]
+    },
+    "data": {
+      "summary": "7 roles. Pipeline, modeling, and activation builders, with a data QA. For a data platform (warehouse, dbt, reverse ETL).",
+      "roles": ["pm", "scrum-master", "platform", "backend", "frontend", "qa", "researcher"],
+      "overrides": {
+        "platform": {
+          "name": "pipeline",
+          "title": "Pipeline",
+          "description": "Pipeline builder. Use to build ingestion, orchestration, and warehouse objects from a spec.",
+          "mission": "Build and run the data pipelines: ingestion, orchestration, raw and staging layers.",
+          "write": ["pipelines/**", "ingestion/**", "infra/**", ".github/**", "scripts/**"],
+          "deny": ["CLAUDE.md", ".claude/state/**"],
+          "never": ["Never run a backfill or a full refresh in production without a spec that {{DECIDER}} approved.", "Never weaken a guard hook or a deny rule without a spec that {{DECIDER}} approved."]
+        },
+        "backend": {
+          "name": "modeling",
+          "title": "Modeling",
+          "description": "Modeling builder. Use to build transformation models, tests, and documentation from a spec.",
+          "mission": "Build the transformation layer: models, tests, contracts, and documentation.",
+          "write": ["models/**", "macros/**", "tests/**", "seeds/**", "snapshots/**"],
+          "never": ["Never change a contract that a downstream consumer uses without a spec and a version bump.", "Never review or approve your own PR."]
+        },
+        "frontend": {
+          "name": "activation",
+          "title": "Activation",
+          "description": "Activation builder. Use to build syncs, dashboards, and consumer-facing data products from a spec.",
+          "mission": "Build the activation layer: syncs, dashboards, and the data products that users see.",
+          "write": ["syncs/**", "dashboards/**", "apps/**"],
+          "deny": [],
+          "never": ["Never sync personal data to a destination that the plans do not list.", "Never review or approve your own PR."]
+        },
+        "qa": {
+          "description": "Data QA reviewer. Use to review a PR, run the data tests, check row counts and contracts, and post a review that starts with QA: PASS or QA: CHANGES NEEDED. Never fixes code.",
+          "mission": "Find defects before {{DECIDER}} merges: failing tests, broken contracts, wrong counts, leaked personal data. Report. Never fix."
+        }
+      }
+    },
+    "full": {
+      "summary": "11 roles. The complete default team: PM, Scrum master, three builders, Designer, QA, UAT, Release, Growth, and a Researcher helper.",
+      "roles": ["pm", "scrum-master", "platform", "backend", "frontend", "designer", "qa", "uat", "release", "growth", "researcher"]
+    }
+  }
+}
