@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""SessionStart hook: tell the session its role and the first steps."""
+"""SessionStart hook: tell the session its role, the first steps, and the last session's cost."""
 
 from __future__ import annotations
 
@@ -9,6 +9,16 @@ import sys
 from pathlib import Path
 
 ROOT = Path(os.environ.get("CLAUDE_PROJECT_DIR") or Path(__file__).resolve().parents[2])
+
+
+def last_cost_line() -> str:
+    """The one-line summary that cost_report.py left for the next session, if any."""
+    path = ROOT / ".claude" / "state" / "last-cost.txt"
+    try:
+        text = path.read_text().strip()
+    except OSError:
+        return ""
+    return f"Last session: {text}" if text else ""
 
 
 def main() -> None:
@@ -29,6 +39,9 @@ def main() -> None:
             "`python3 .claude/hooks/role.py set <role>` first. "
             "Do the start steps in CLAUDE.md, section 3."
         )
+    line = last_cost_line()
+    if line:
+        print(line)
 
 
 if __name__ == "__main__":

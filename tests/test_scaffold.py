@@ -23,20 +23,24 @@ def frontmatter(text: str) -> dict:
     """Parse the simple YAML frontmatter that the scaffold writes."""
     assert text.startswith("---\n"), "no frontmatter"
     body = text.split("---\n", 2)[1]
-    try:
-        import yaml  # type: ignore
-
-        return yaml.safe_load(body)
-    except ImportError:
-        out, key = {}, None
-        for line in body.splitlines():
-            if line.startswith("  - ") and key:
-                out.setdefault(key, []).append(line[4:])
-            elif ":" in line:
-                key, _, value = line.partition(":")
-                value = value.strip()
-                out[key] = json.loads(value) if value.startswith('"') else value
-        return out
+    # No PyYAML on purpose: CI runners do not have it, and the scaffold writes a flat subset of YAML.
+    out: dict = {}
+    key = None
+    for line in body.splitlines():
+        if line.startswith("  - ") and key:
+            if not isinstance(out.get(key), list):
+                out[key] = []
+            out[key].append(line[4:].strip())
+        elif ":" in line and not line.startswith(" "):
+            key, _, value = line.partition(":")
+            value = value.strip()
+            if value == "":
+                out[key] = []  # a block list follows
+            elif value.startswith('"'):
+                out[key] = json.loads(value)
+            else:
+                out[key] = value
+    return out
 
 
 class ScaffoldTest(unittest.TestCase):
@@ -108,6 +112,76 @@ class ScaffoldTest(unittest.TestCase):
         self.assertIn("Wrote 0 files", second.stdout)
         after = {p: p.read_bytes() for p in self.root.rglob("*") if p.is_file() and ".git" not in p.parts}
         self.assertEqual(before, after)
+
+    def test_model_tiers_resolve(self) -> None:
+        pm = frontmatter((self.root / ".claude/agents/pm.md").read_text())
+        qa = frontmatter((self.root / ".claude/agents/qa.md").read_text())
+        researcher = frontmatter((self.root / ".claude/agents/researcher.md").read_text())
+        models = self.config["models"]
+        self.assertEqual(pm["model"], models["contact"])
+        self.assertEqual(qa["model"], models["agentic"])
+        self.assertEqual(researcher["model"], models["helper"])
+        charter = (self.root / "docs/team/pm.md").read_text()
+        self.assertIn(models["contact"], charter)
+        self.assertNotIn("contact\n", charter.split("## Model")[1][:20])
+
+    def test_stack_sections_and_context_doc(self) -> None:
+        frontend = (self.root / ".claude/agents/frontend.md").read_text()
+        self.assertIn("## Your stack", frontend)
+        self.assertIn("Next.js", frontend)
+        self.assertIn("pnpm --filter web test", frontend)
+        self.assertIn("docs/plans/03-web-app.md", frontend)
+        context = self.root / "docs/team/context.md"
+        self.assertTrue(context.is_file())
+        text = context.read_text()
+        self.assertIn("## Stack", text)
+        self.assertIn("apps/web", text)
+        self.assertIn("Stack:", (self.root / "CLAUDE.md").read_text())
+
+    def test_cost_files(self) -> None:
+        cost = json.loads((self.root / ".claude/hooks/cost.json").read_text())
+        self.assertEqual(cost["log"], "docs/log/COST.md")
+        self.assertIn("prices_per_million", cost)
+        self.assertTrue((self.root / "docs/log/COST.md").is_file())
+        self.assertTrue((self.root / ".claude/hooks/cost_report.py").is_file())
+        self.assertTrue((self.root / ".claude/skills/cost-report/SKILL.md").is_file())
+        settings = json.loads((self.root / ".claude/settings.json").read_text())
+        self.assertIn("SessionEnd", settings["hooks"])
+        self.assertTrue((self.root / "docs/plans/00-north-star.md").is_file())
+
+    def test_presets_make_valid_configs(self) -> None:
+        init = KIT / "scripts" / "init_team.py"
+        presets = json.loads((KIT / "scripts" / "presets.json").read_text())["presets"]
+        for name in presets:
+            with tempfile.TemporaryDirectory() as tmp:
+                out = Path(tmp) / "team.json"
+                made = subprocess.run(
+                    [sys.executable, str(init), "--preset", name, "--project", "P", "--decider", "Dee", "--out", str(out)],
+                    capture_output=True, text=True,
+                )
+                self.assertEqual(made.returncode, 0, made.stderr)
+                cfg = json.loads(out.read_text())
+                self.assertEqual(len(cfg["roles"]), len(presets[name]["roles"]))
+                self.assertEqual(cfg["preset"], name)
+                target = Path(tmp) / "proj"
+                target.mkdir()
+                dry = subprocess.run(
+                    [sys.executable, str(SCAFFOLD), "--config", str(out), "--target", str(target), "--dry-run"],
+                    capture_output=True, text=True,
+                )
+                self.assertEqual(dry.returncode, 0, f"{name}: {dry.stderr}")
+                self.assertIn("Would write", dry.stdout)
+
+    def test_bad_model_tier_is_rejected(self) -> None:
+        bad = dict(self.config, models={"boss": "opus"})
+        with tempfile.NamedTemporaryFile("w", suffix=".json", delete=False) as f:
+            json.dump(bad, f)
+        result = subprocess.run(
+            [sys.executable, str(SCAFFOLD), "--config", f.name, "--target", str(self.root), "--dry-run"],
+            capture_output=True, text=True,
+        )
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("model tier", result.stderr)
 
     def test_bad_config_is_rejected(self) -> None:
         bad = dict(self.config, contact_role="nobody")

@@ -23,13 +23,14 @@ Follow this order. Each step needs the one before it.
 
 | # | Step | Output | Why now |
 |---|---|---|---|
+| 0 | Discovery | A scan of the repo, a context Q&A, and a web check of the stack (`onboard-project` skill) | The team must know the stack and the users before it plans or builds. A generic team guesses. |
 | 1 | North Star Q&A | Plan 00: the goal, the users, the hypotheses, the locked decisions, the cutlines | Every later choice is checked against it. |
 | 2 | Logs and the revisit log | `docs/log/` | Start on day 1, so the decider's reasons are kept from the start. |
 | 3 | Writing standard (optional) | `docs/standards/` | Plain, short text is easier for humans and for agents. Decide it before the docs grow. |
 | 4 | Component plans, by Q&A | `docs/plans/NN-*.md` + ADRs | Ask, research, give options with a recommendation, then record the decision. One plan at a time. |
 | 5 | Team design | The roles, the contact role, the PR loop, the session cap | Decide where agents run (your own sessions, not CI, unless you choose CI) before you build anything for them. |
 | 6 | CLAUDE.md | A short root file: rules, start steps, end steps, a map of the docs | Each session reads it first. Keep it short. Link to the details. |
-| 7 | Team build | Role files, skills, guard hooks, role tests | Run `setup-team` from this kit. |
+| 7 | Team build | Role files with the stack in them, skills, guard hooks, the cost hook, role tests | Run `setup-team` from this kit. `onboard-project` has already written the `team.json`. |
 | 8 | Role tests | 2 or more runs, with fixes | They find defects that a read does not. |
 | 9 | Time boxes | Thin slices with dates and a buffer | Confirm them only after the team works, because the team sets the pace. |
 | 10 | Start | The decider starts the PM session | From now on, the decider talks only to the PM. |
@@ -55,7 +56,9 @@ Follow this order. Each step needs the one before it.
 | Growth | An agentic model | Drafts only |
 | Researcher (helper) | A small, fast model | Read-only facts with sources |
 
-Keep the session cap low at first (for example 3). Raise it when usage data shows room.
+The models are tiers in `team.json` (`contact`, `agentic`, `helper`), so the decider picks them once at setup and can change them in one place.
+
+Keep the session cap low at first (for example 3). Raise it when the cost log (`docs/log/COST.md`, written by a hook at each session end) shows room.
 
 ## 5. Guardrails: 3 layers
 

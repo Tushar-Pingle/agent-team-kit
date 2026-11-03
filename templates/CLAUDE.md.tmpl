@@ -5,6 +5,7 @@ Read this file first, in every session. It holds the rules. The details are in `
 ## 1. What {{PROJECT}} is
 
 - {{PROJECT_SUMMARY}}
+- {{STACK_SUMMARY}}
 - {{DECIDER}} decides. A team of AI agents builds ([`docs/team/`](docs/team/README.md)).
 
 ## 2. Who decides
@@ -53,6 +54,7 @@ Do these steps before any other work:
 **Cost**
 
 14. Act frugal until revenue. Before you add a paid service, show the cost to start, the cost after, and an exit path. {{DECIDER}} decides.
+15. Each session's tokens and cost go to [`{{COST_LOG}}`]({{COST_LOG}}) (a hook writes it). Use the `cost-report` skill when {{DECIDER}} asks where the tokens went.
 
 ## 5. How to write
 
@@ -67,6 +69,7 @@ Do these steps before any other work:
 | [`worklog.jsonl`](docs/log/worklog.jsonl) + [`WORKLOG.md`](docs/log/WORKLOG.md) | One entry for each work item, in the same commit. Append only. `actor` = `human`, `llm`, or `llm:<role>`. |
 | [`CONVERSATIONS.md`](docs/log/CONVERSATIONS.md) | One summary at the end of each session: {{DECIDER}}'s ideas and reasons, then what the LLM did. |
 | [`REVISIT.md`](docs/log/REVISIT.md) | Ideas that can change the scope, with {{DECIDER}}'s decision. |
+| [`COST.md`]({{COST_LOG}}) | One line for each session: tokens by model, and the cost. A hook appends it. |
 
 Full rules: [`docs/log/README.md`](docs/log/README.md).
 
@@ -78,6 +81,7 @@ Full rules: [`docs/log/README.md`](docs/log/README.md).
 | Decision records | [`docs/adr/`](docs/adr/) |
 | Agent team, PR loop, specs | [`docs/team/README.md`](docs/team/README.md) |
 | Run the agent team | [`docs/runbooks/agent-team.md`](docs/runbooks/agent-team.md) |
+| Project context: stack, layout, users | [`docs/team/context.md`](docs/team/context.md) |
 {{WRITING_MAP_ROW}}
 
 ## 8. Branches and PRs

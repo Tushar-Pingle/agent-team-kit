@@ -13,6 +13,8 @@ This runbook tells {{DECIDER}}, the {{CONTACT_TITLE}}, and the Scrum master how 
 | Role scope | `.claude/hooks/roles.json` | The folders that each role can write |
 | Role state | `.claude/state/role` (git ignores it) | The role of this checkout, set once with `role.py` |
 | Role tests | `.claude/role-tests/<role>/` | Test tasks with a known good result |
+| Project context | `docs/team/context.md` | The stack, layout, users, and constraints that the role files use |
+| Cost hook | `.claude/hooks/cost_report.py`, `.claude/hooks/cost.json` | Appends each session's tokens and cost to `{{COST_LOG}}`; `cost-report` skill shows it on demand |
 
 ## 2. How a session knows its role
 
@@ -81,3 +83,10 @@ The guard is one layer of three (instructions, hooks, permissions):
 1. Change the role file through a spec and a PR.
 2. Run the role tests for that role (`.claude/role-tests/README.md`).
 3. The role file is used only after it passes.
+
+## 10. Cost
+
+- Each session ends with one line in `{{COST_LOG}}`: tokens by model, and the cost from the price table. The next session's start message repeats the last total.
+- To see the current session: `python3 .claude/hooks/cost_report.py`, or the `cost-report` skill.
+- To set prices: fill `cost.prices_per_million` in `team.json` and run the scaffold again with `--force` for `.claude/hooks/cost.json`, or edit that file. An empty table gives tokens only.
+- Raise the session cap only when the cost log shows room.

@@ -1,0 +1,10 @@
+# Cost log
+
+One line for each session. The `cost_report.py` hook appends it when a session ends. Tokens are summed from the session transcript, one count for each assistant message. Prices come from `.claude/hooks/cost.json` (set them in `team.json` and run the scaffold again, or edit the file). An empty price table gives tokens only.
+
+To see the current session before it ends, use the `cost-report` skill.
+
+Limits: the hook counts the tokens of this session's transcript. It does not count a separate cloud session, and it counts a subagent only when its messages are in the same transcript.
+
+| Date | Session | Role | Model | Input | Output | Cache write | Cache read | Total | Cost ({{COST_CURRENCY}}) |
+|---|---|---|---|---|---|---|---|---|---|

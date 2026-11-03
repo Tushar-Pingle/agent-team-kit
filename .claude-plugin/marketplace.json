@@ -1,0 +1,24 @@
+{
+  "name": "agent-team-kit",
+  "owner": {
+    "name": "Tushar Pingle",
+    "url": "https://github.com/Tushar-Pingle"
+  },
+  "metadata": {
+    "description": "Agent Team Kit: one human decider, a team of AI agents that know your stack.",
+    "version": "0.2.0"
+  },
+  "plugins": [
+    {
+      "name": "agent-team-kit",
+      "source": "./",
+      "description": "Onboard and plan a project by Q&A, then scaffold a tailored agent team: PM, builders that know the stack, reviewers with verdict lines, guard hooks, role tests, and a cost line for each session.",
+      "version": "0.2.0",
+      "author": {
+        "name": "Tushar Pingle"
+      },
+      "keywords": ["agents", "team", "orchestration", "onboarding", "planning", "hooks", "cost"],
+      "category": "productivity"
+    }
+  ]
+}
