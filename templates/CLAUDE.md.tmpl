@@ -1,0 +1,100 @@
+# CLAUDE.md: {{PROJECT}}
+
+Read this file first, in every session. It holds the rules. The details are in `docs/`. Keep this file short: put details in the plans and link to them.
+
+## 1. What {{PROJECT}} is
+
+- {{PROJECT_SUMMARY}}
+- {{DECIDER}} decides. A team of AI agents builds ([`docs/team/`](docs/team/README.md)).
+
+## 2. Who decides
+
+- **{{DECIDER}} decides.** You propose, research, and build. You never decide a scope change, a locked decision, or a revisit item.
+- Ask; do not assume. When you ask, give each option with context, the trade-offs, and a recommendation.
+- When {{DECIDER}} gives a new idea, explain it back in your own words before you design. Then run the now-or-later analysis in [`docs/log/REVISIT.md`](docs/log/REVISIT.md).
+- In team work, {{DECIDER}} talks only to the {{CONTACT_TITLE}}. The {{CONTACT_TITLE}} reports back to {{DECIDER}}.
+
+## 3. Start of each session
+
+Do these steps before any other work:
+
+1. Read the plan index: [`docs/plans/README.md`](docs/plans/README.md).
+2. Read the last 2 summaries in [`docs/log/CONVERSATIONS.md`](docs/log/CONVERSATIONS.md).
+3. Read the last 10 entries in [`docs/log/worklog.jsonl`](docs/log/worklog.jsonl).
+4. Read the status table in [`docs/log/REVISIT.md`](docs/log/REVISIT.md).
+5. If you are a role agent, read your charter in [`docs/team/`](docs/team/README.md).
+6. Check the open PRs and the board.
+7. Tell {{DECIDER}} in 3 lines what you will do. Then start.
+
+## 4. Hard rules
+
+**Decisions and scope**
+
+1. The plans in `docs/plans/` and the ADRs in `docs/adr/` are the source of truth. If code and a plan disagree, stop and ask.
+2. Do not change an accepted ADR. To change a decision, write a new ADR that supersedes it.
+3. An idea that can change the scope goes through the revisit log. Only {{DECIDER}} adopts, parks, or rejects it.
+4. Do not add scope. Build only what the issue, the spec, and the plans say.
+5. Plans come first. Write the plan for a component before its build starts.
+
+**Team and approvals** ([`docs/team/`](docs/team/README.md))
+
+6. A builder never reviews, tests, or approves its own work. A builder executes the {{CONTACT_TITLE}}'s spec. If the spec is unclear, stop and ask the {{CONTACT_TITLE}}.
+7. QA, UAT, and the Designer never fix code. They report findings, with a verdict line (for example `QA: PASS` or `QA: CHANGES NEEDED`).
+8. {{DECIDER}} approves every merge and every deploy.
+9. Outbound content (posts, emails) is drafts only. Never post, send, or publish anything.
+10. The team has {{ROLE_COUNT}} roles. At most {{MAX_SESSIONS}} agent sessions run at the same time.
+
+**Security and data**
+
+11. Never put a secret in code, logs, commits, or messages. Secrets live in {{SECRET_STORE}}.
+12. No personal data in logs, events, or the repo.
+13. Add the project's own security, data, and compliance rules here, with links to their plans.
+
+**Cost**
+
+14. Act frugal until revenue. Before you add a paid service, show the cost to start, the cost after, and an exit path. {{DECIDER}} decides.
+
+## 5. How to write
+
+- {{WRITING_RULE}}
+- Use a Mermaid diagram where it helps a human: flows, structures, dependencies, states.
+- Commits use Conventional Commits, for example `feat(api): add submissions endpoint`.
+
+## 6. Logs (every work item)
+
+| Log | Rule |
+|---|---|
+| [`worklog.jsonl`](docs/log/worklog.jsonl) + [`WORKLOG.md`](docs/log/WORKLOG.md) | One entry for each work item, in the same commit. Append only. `actor` = `human`, `llm`, or `llm:<role>`. |
+| [`CONVERSATIONS.md`](docs/log/CONVERSATIONS.md) | One summary at the end of each session: {{DECIDER}}'s ideas and reasons, then what the LLM did. |
+| [`REVISIT.md`](docs/log/REVISIT.md) | Ideas that can change the scope, with {{DECIDER}}'s decision. |
+
+Full rules: [`docs/log/README.md`](docs/log/README.md).
+
+## 7. Map of the docs
+
+| Need | Go to |
+|---|---|
+| Plans and their status | [`docs/plans/README.md`](docs/plans/README.md) |
+| Decision records | [`docs/adr/`](docs/adr/) |
+| Agent team, PR loop, specs | [`docs/team/README.md`](docs/team/README.md) |
+| Run the agent team | [`docs/runbooks/agent-team.md`](docs/runbooks/agent-team.md) |
+{{WRITING_MAP_ROW}}
+
+## 8. Branches and PRs
+
+- Work on a short branch from `{{MAIN_BRANCH}}`. Keep PRs small, less than about 400 changed lines.
+- Each PR passes the CI gate and the PR loop before {{DECIDER}} merges.
+- Never force-push to `{{MAIN_BRANCH}}`. Never skip a test to make CI pass.
+
+## 9. End of each session
+
+1. Make sure each work item has a work-log entry.
+2. Add the conversation summary to `CONVERSATIONS.md`.
+3. Add revisit-log entries for new ideas, with {{DECIDER}}'s decision.
+4. Update the plan status in the plan index, if it changed.
+5. Commit, then open or update the PR.
+6. Tell {{DECIDER}} the open items and the next step.
+
+## 10. Changes to this file
+
+This file changes only through a PR that {{DECIDER}} approves.

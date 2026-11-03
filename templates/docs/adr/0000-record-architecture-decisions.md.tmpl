@@ -1,0 +1,33 @@
+# ADR 0000: Record architecture decisions
+
+Date: {{DATE}}
+Status: accepted
+
+## Context
+
+{{PROJECT}} needs a record of each important decision and the reason for it. LLM sessions and people read it later, so that nobody decides the same thing twice.
+
+## Decision
+
+1. Each important decision is an ADR in `docs/adr/NNNN-short-title.md`, with Context, Decision, and Consequences.
+2. An accepted ADR does not change. A new ADR supersedes it and names the part that it changes.
+3. {{DECIDER}} accepts each ADR.
+
+## Consequences
+
+- The reasons for each choice stay in the repo, next to the code.
+- A session can check a proposal against the ADRs before it builds.
+
+## Template
+
+```markdown
+# ADR NNNN: <title>
+
+Date: YYYY-MM-DD
+Status: proposed | accepted | superseded by NNNN
+Supersedes: <ADR and decision number, if any>
+
+## Context
+## Decision
+## Consequences
+```

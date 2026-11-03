@@ -1,0 +1,57 @@
+# Revisit log
+
+This log holds important ideas that can change the scope. Each idea gets a decision from {{DECIDER}}: adopt now, park for later, or reject. No idea gets lost.
+
+**Rule: only The decider decides.** The LLM never parks, adopts, or rejects an idea alone.
+
+## Process
+
+This diagram shows what happens when an idea comes up.
+
+```mermaid
+flowchart TD
+    I[The decider or the LLM raises an idea] --> A[LLM gives a short now-or-later analysis]
+    A --> D{The decider decides}
+    D -- Adopt now --> AD[Update the plan or write an ADR]
+    D -- Park --> PK[Add an entry with status parked]
+    D -- Reject --> RJ[Add an entry with status rejected and the reason]
+    AD --> WL[Add a work log entry]
+    PK --> WL
+    RJ --> WL
+    PK -. Trigger occurs .-> A
+```
+
+The now-or-later analysis has 4 parts:
+
+1. **Value now.** What the idea gives to the current scope and to the hypotheses.
+2. **Cost now.** The added work, for the team.
+3. **Risk of delay.** What becomes harder if we do it later.
+4. **Keep open.** What the design must keep possible now, so that the idea is easy later.
+
+## Rules
+
+1. Give each item an id `RV-NNNN`. Increase by 1.
+2. Do not delete an item. To change it, change its status and add a dated line to its history.
+3. Add a work log entry for each new item and for each status change.
+4. Give each parked item a revisit trigger: an event or a date.
+5. When a trigger occurs, do the analysis again. Then The decider decides again.
+
+## Status
+
+| ID | Title | Status | Raised | Revisit trigger |
+|---|---|---|---|---|
+
+## Items
+
+Use this format for each item:
+
+```markdown
+### RV-NNNN: <title>
+
+- **Idea (<who>):** <the idea, in their words where possible>
+- **Analysis:** <value now, cost now, risk of delay>
+- **Decision:** <date>. <Adopt | Park | Reject>, and why.
+- **Keep open:** <what the design keeps possible>
+- **Trigger:** <an event or a date>
+- **Links:** <plans, ADRs>
+```

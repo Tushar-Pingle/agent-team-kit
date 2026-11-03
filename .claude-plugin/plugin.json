@@ -1,0 +1,10 @@
+{
+  "name": "agent-team-kit",
+  "displayName": "Agent Team Kit",
+  "version": "0.1.0",
+  "description": "Set up a project that one human decider runs with a team of AI agents: a PM as single point of contact, spec-driven builders, QA/UAT/Designer reviewers with verdict lines, guard hooks, role tests, and the planning and logging method behind it.",
+  "author": {
+    "name": "Tushar Pingle"
+  },
+  "keywords": ["agents", "team", "orchestration", "pm", "qa", "hooks", "role-tests", "method"]
+}

@@ -1,0 +1,83 @@
+# Runbook: run the agent team
+
+This runbook tells {{DECIDER}}, the {{CONTACT_TITLE}}, and the Scrum master how to start and run role sessions. The team rules are in [`docs/team/README.md`](../team/README.md).
+
+## 1. Parts
+
+| Part | Where | What it does |
+|---|---|---|
+| Role file | `.claude/agents/<role>.md` | Mission, scope, steps, never-list, model, and skills for one role |
+| Charter | `docs/team/<role>.md` | The human description of the role |
+| Skills | `.claude/skills/<name>/SKILL.md` | Shared know-how, for example `write-spec` and `review-pr` |
+| Guard hook | `.claude/hooks/guard.py` | Blocks dangerous actions for all sessions, and writes outside the role's scope |
+| Role scope | `.claude/hooks/roles.json` | The folders that each role can write |
+| Role state | `.claude/state/role` (git ignores it) | The role of this checkout, set once with `role.py` |
+| Role tests | `.claude/role-tests/<role>/` | Test tasks with a known good result |
+
+## 2. How a session knows its role
+
+The guard hook finds the role in this order:
+
+1. `agent_type` from Claude Code. It exists when the session starts with `claude --agent <role>`, or when the role runs as a subagent.
+2. The file `.claude/state/role`. A separate cloud session sets it with `python3 .claude/hooks/role.py set <role>` as its first step.
+3. If there is no role, only the rules for all sessions apply. This is the case for {{DECIDER}}'s own sessions.
+
+**A subagent never runs `role.py set`.** A subagent shares the checkout of the session that started it. If it sets the role, the role also limits the parent session, and the guard then blocks the normal undo. The subagent's `agent_type` already names its role. The guard blocks `role.py set` in any session that has an `agent_type`.
+
+## 3. Start the {{CONTACT_TITLE}} session ({{DECIDER}})
+
+1. **Local.** In the repo, run `claude --agent {{CONTACT_NAME}}`. The session uses the role file and its model.
+2. **Cloud.** Start a new session on the repo with the role's model. Send this first message:
+
+```text
+You are the {{CONTACT_TITLE}} agent. Run `python3 .claude/hooks/role.py set {{CONTACT_NAME}}`.
+Then read .claude/agents/{{CONTACT_NAME}}.md and follow it.
+```
+
+Then talk only to the {{CONTACT_TITLE}}.
+
+## 4. Start a role session ({{CONTACT_TITLE}} or Scrum master)
+
+1. Check the count. At most {{MAX_SESSIONS}} agent sessions run at the same time. The {{CONTACT_TITLE}} counts as one.
+2. Create the session with: the repo, the role's model, a title `<role>: <issue>`, and the task message in section 5. Never use a permission mode that waits for a human to approve a plan.
+3. Record the session id in the issue.
+
+## 5. Task message template
+
+```text
+You are the <ROLE> agent of the {{PROJECT}} team.
+
+1. Run `python3 .claude/hooks/role.py set <role>`.
+2. Read .claude/agents/<role>.md and follow it.
+3. Your task: <issue link> (spec: <spec link>).
+4. Branch: <branch name from {{MAIN_BRANCH}}>.   (builders only)
+5. Ask spec questions in the issue. Then message the {{CONTACT_TITLE}} session <id>.
+6. Report hand-offs and blocks to the Scrum master session <id>.
+```
+
+For a subagent (inside one session), leave out step 1.
+
+## 6. Notify {{DECIDER}}
+
+1. The Scrum master tells the {{CONTACT_TITLE}} when a PR has all its verdicts, or when work is blocked.
+2. The {{CONTACT_TITLE}} tells {{DECIDER}}. If {{DECIDER}} is away, the {{CONTACT_TITLE}} also sends a push notification.
+
+## 7. If the guard blocks an action
+
+1. Read the reason.
+2. Do not try another way around it.
+3. If the block looks wrong, tell the {{CONTACT_TITLE}}. Change `roles.json` or `guard.py` only through a reviewed PR that {{DECIDER}} approves.
+
+## 8. Limits of the guard
+
+The guard is one layer of three (instructions, hooks, permissions):
+
+1. It checks the paths of `Write` and `Edit`. It does not check every file that a shell command writes. QA checks the changed files of each PR against the builder's scope.
+2. It finds common secret formats only. Add a secret scan to CI (for example gitleaks) as the second check.
+3. A user can turn hooks off in their own settings.
+
+## 9. Change a role
+
+1. Change the role file through a spec and a PR.
+2. Run the role tests for that role (`.claude/role-tests/README.md`).
+3. The role file is used only after it passes.

@@ -1,0 +1,51 @@
+# Agent team
+
+{{PROJECT}} is built by a team of AI agents. {{DECIDER}} decides and approves. {{DECIDER}} talks only to the {{CONTACT_TITLE}}. How to run the team: [runbook](../runbooks/agent-team.md).
+
+## Chain of command
+
+This diagram shows who talks to whom.
+
+```mermaid
+flowchart TD
+    D[{{DECIDER}}: decides and approves] <--> C[{{CONTACT_TITLE}}: single point of contact]
+    C --> SM[Scrum master: routing, board, logs]
+    SM --> B[Builders]
+    SM --> R[Reviewers: QA, UAT, Designer]
+    SM --> O[Other roles]
+    B -. spec question .-> C
+```
+
+## Roles
+
+{{ROLE_TABLE}}
+
+Helpers that any role can start for routine work: {{HELPERS}}.
+
+The machine definitions are in `.claude/agents/<role>.md`. The write scope of each role is in `.claude/hooks/roles.json`.
+
+## Rules
+
+1. {{DECIDER}} talks only to the {{CONTACT_TITLE}}. The {{CONTACT_TITLE}} reports back.
+2. Each build issue has an implementation-ready spec from the {{CONTACT_TITLE}} ([template](spec-template.md)).
+3. Builders only execute the spec. If anything is unclear, they stop the part that needs the answer and ask the {{CONTACT_TITLE}}. They never guess.
+4. A builder never reviews, tests, or approves its own work.
+5. QA, UAT, and the Designer never fix code. The first line of each review is the verdict: `QA: PASS`, `QA: CHANGES NEEDED`, `UAT: PASS`, `UAT: CHANGES NEEDED`, `DESIGN: PASS`, or `DESIGN: CHANGES NEEDED`.
+6. {{DECIDER}} approves every merge and every deploy.
+7. Outbound content is drafts only. {{DECIDER}} approves and sends each item.
+8. Each agent writes its own work-log entries, with `actor` set to `llm:<role>`. Reviewers put the line in their review, and the Scrum master appends it.
+9. Hooks and a write scope limit each role. A role file is used only after it passes its role tests (`.claude/role-tests/`).
+10. At most {{MAX_SESSIONS}} agent sessions run at the same time.
+
+## PR loop
+
+```mermaid
+flowchart LR
+    S[Spec from the {{CONTACT_TITLE}}] --> DEV[Builder opens PR]
+    DEV --> QA{QA review}
+    QA -- CHANGES NEEDED --> DEV
+    QA -- PASS --> UAT{UAT and Designer, if user-facing or UI}
+    UAT -- CHANGES NEEDED --> DEV
+    UAT -- PASS --> N[{{CONTACT_TITLE}} tells {{DECIDER}}]
+    N --> M[{{DECIDER}} merges]
+```
